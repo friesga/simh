@@ -366,6 +366,7 @@ extern t_stat iopageR (int32 *data, uint32 addr, int32 access);
 extern t_stat iopageW (int32 data, uint32 addr, int32 access);
 extern int32 calc_ints (int32 nipl, int32 trq);
 extern int32 get_vector (int32 nipl);
+extern void setHITMISS (int);
 
 /* Trap data structures */
 
@@ -2825,21 +2826,25 @@ return;
  */
 int32 kad11_RdMemW (int32 pa)
 {
+    if (CPUO (OPT_CACHE)) setHITMISS (HIT);
     return (M[(pa) >> 1]);
 }
 
 int32 kad11_RdMemB (int32 pa)
 {
+    if (CPUO (OPT_CACHE)) setHITMISS (HIT);
     return ((((pa) & 1) ? M[(pa) >> 1] >> 8 : M[(pa) >> 1]) & 0377);
 }
 
 void kad11_WrMemW (int32 pa, int32 d)
 {
+    if (CPUO (OPT_CACHE)) setHITMISS (MISS);
     M[(pa) >> 1] = (d);
 }
 
 void kad11_WrMemB (int32 pa, int32 d)
 {
+    if (CPUO (OPT_CACHE)) setHITMISS (MISS);
     M[(pa) >> 1] = ((pa) & 1) ? \
         ((M[(pa) >> 1] & 0377) | (((d) & 0377) << 8)) : \
         ((M[(pa) >> 1] & ~0377) | ((d) & 0377));

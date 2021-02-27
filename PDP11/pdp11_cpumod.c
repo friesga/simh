@@ -1253,3 +1253,15 @@ if (CPUT (CPUT_JB|CPUT_JE))
 else fprintf (st, "Not implemented\n");
 return SCPE_OK;
 }
+
+/*
+ * Set the memory cache hit/miss register
+ */
+void setHITMISS (int hitmiss)
+{
+    // The cache is disabled if bits 2 and 3 are set both cf. Processor Handbook
+    if (~CCR & 0x0C) {
+        // Set hit/miss register
+        HITMISS = hitmiss ? ((HITMISS << 1) & 0x3F) | 0x01 : (HITMISS << 1) & 0x3F;
+    }
+}
