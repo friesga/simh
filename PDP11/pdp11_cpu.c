@@ -2818,6 +2818,33 @@ if (iopageW (data, pa, WRITEB) != SCPE_OK) {            /* invalid I/O addr? */
 return;
 }
 
+/*
+ * Physical read/write memory routines
+ *  Used by CPU and IO devices
+ *  Physical address is known to be legal
+ */
+int32 kad11_RdMemW (int32 pa)
+{
+    return (M[(pa) >> 1]);
+}
+
+int32 kad11_RdMemB (int32 pa)
+{
+    return ((((pa) & 1) ? M[(pa) >> 1] >> 8 : M[(pa) >> 1]) & 0377);
+}
+
+void kad11_WrMemW (int32 pa, int32 d)
+{
+    M[(pa) >> 1] = (d);
+}
+
+void kad11_WrMemB (int32 pa, int32 d)
+{
+    M[(pa) >> 1] = ((pa) & 1) ? \
+        ((M[(pa) >> 1] & 0377) | (((d) & 0377) << 8)) : \
+        ((M[(pa) >> 1] & ~0377) | ((d) & 0377));
+}
+
 /* Relocate virtual address, read access
 
    Inputs:

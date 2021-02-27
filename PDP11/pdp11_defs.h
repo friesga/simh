@@ -910,12 +910,15 @@ int32 Map_Write18 (uint32 ba, int32 bc, uint32 *buf);
 #define INIMEMSIZE      001000000                       /* 2**18 */
 #define ADDR_IS_MEM(x)  (((t_addr) (x)) < MEMSIZE)
 
-#define RdMemW(pa)      (M[(pa) >> 1])
-#define RdMemB(pa)      ((((pa) & 1)? M[(pa) >> 1] >> 8: M[(pa) >> 1]) & 0377)
-#define WrMemW(pa,d)    M[(pa) >> 1] = (d)
-#define WrMemB(pa,d)    M[(pa) >> 1] = ((pa) & 1)? \
-                            ((M[(pa) >> 1] & 0377) | (((d) & 0377) << 8)): \
-                            ((M[(pa) >> 1] & ~0377) | ((d) & 0377))
+#define RdMemW(pa)      kad11_RdMemW (pa)
+#define RdMemB(pa)      kad11_RdMemB (pa)
+#define WrMemW(pa,d)    kad11_WrMemW (pa, d)
+#define WrMemB(pa, d)   kad11_WrMemB (pa, d)
+
+int32 kad11_RdMemW (int32 pa);
+int32 kad11_RdMemB (int32 pa);
+void kad11_WrMemW (int32 pa, int32 d);
+void kad11_WrMemB (int32 pa, int32 d);
 
 #endif
 
