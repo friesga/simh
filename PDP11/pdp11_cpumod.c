@@ -635,6 +635,7 @@ switch ((pa >> 1) & 017) {                              /* decode pa<4:1> */
         return SCPE_OK;
 
     case 005:                                           /* Hit/miss */
+        HITMISS = data;
         return SCPE_OK;
 
     case 010:                                           /* low size */
