@@ -1256,13 +1256,20 @@ return SCPE_OK;
 }
 
 /*
- * Set the memory cache hit/miss register
+ * Update the memory cache hit/miss register
+ * This is a minimal implementation of the cache HITMISS register,
+ * just enough to satisfy the basic diagnostic code verifying the
+ * functioning of the cache. All memory reads are treated as cache
+ * hits, all writes are regarded as misses. If the cache is switched
+ * off the memory access is registered as a miss.
+ * 
+ * The cache is disabled if bits 2 and 3 are set both cf. Processor Handbook.
+ * If at least one of the cache groups is enabled, the access is registered
+ * as hit or miss, if both cache groups are disabled, the access is registerd
+ * as a miss.
  */
-void setHITMISS (int hitmiss)
+void updateHITMISS (int access)
 {
-    // The cache is disabled if bits 2 and 3 are set both cf. Processor Handbook
-    if (~CCR & 0x0C) {
-        // Set hit/miss register
-        HITMISS = hitmiss ? ((HITMISS << 1) & 0x3F) | 0x01 : (HITMISS << 1) & 0x3F;
-    }
+    int hitmiss = (access == READ) && (~CCR & 0x0C) ? HIT : MISS;
+    HITMISS = ((HITMISS << 1) & 0x3F) | hitmiss;
 }
